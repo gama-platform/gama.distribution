@@ -1,0 +1,61 @@
+name: Update repositories
+run-name: Publish release ${{ inputs.tag }}
+
+on:
+  workflow_dispatch: 
+    inputs:
+      tag:
+        description: "Release tag name"
+        required: true
+        type: string
+      targets:
+        description: "List of distros to update, separated by spaces"
+        type: string
+        default: "apt docker arch flatpak"
+
+  workflow_call:
+    inputs:
+      tag:
+        description: "Release tag name"
+        required: true
+        type: string
+      targets:
+        description: "List of distros to update, separated by spaces"
+        type: string
+        default: "apt docker arch flatpak"
+
+env:
+  REPOSITORY: gama-platform/gama
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg
+
+          pip install Jinja2
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update apt repository
+        if: contains(inputs.targets, 'apt') 
+        uses: ./.github/actions/update-apt
+        with:
+          tag: ${{ inputs.tag }}
+          repository: ${{ env.REPOSITORY }}
+      
+      - name: Commit new files
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "."
+          author_email: ${{ secrets.BOT_GH_EMAIL }}
+          author_name: ${{ secrets.BOT_GH_NAME }}
+          committer_name: ${{ secrets.BOT_GH_NAME }}
+          committer_email: ${{ secrets.BOT_GH_EMAIL }}
+          github_token: ${{ github.token }}
+          message: "Update repository with gama ${{ inputs.tag }}"
+          push: true

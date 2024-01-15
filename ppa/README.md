@@ -1,7 +1,7 @@
-# gama.ppa
+# PPA
 
-This action creates a GitHub Pages site using Jekyll and CloudFlare Pages.
-It is triggered by either a `workflow_dispatch` or a `workflow_call` event, both with the `tag` input referring to the tag attached to the release you wish to publish.
+This action creates an apt repository hosted on CloudFlare Pages.
+It is triggered by the ![update-apt action](../.github/actions/update-apt/action.yaml), that has a `tag` input referring to the tag attached to the release you wish to publish.
 
 To add the repository do the following commands:
 
@@ -9,7 +9,7 @@ To add the repository do the following commands:
 sudo -i
 apt update
 apt install ca-certificates
-echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa/ppa ./" | sudo tee -a /etc/apt/sources.list
+echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | sudo tee -a /etc/apt/sources.list
 ```
 
 ## Latest packages 🟢

@@ -42,7 +42,7 @@ If you are not a maintainer, you can skip this section.
 - Click on `Workers & Pages`, then `Pages` and `Connect to git`
 - Select the repository
 - Set framework as `Jekyll`
-- Set build command as `jekyll build && cat __site/_headers.d* > _site/_headers` to use headers
+- Set build command as `jekyll build && cat __site/_headers.d/* > _site/_headers` to use headers
 - Set the following secrets: 
     - `BOT_GH_EMAIL` (the email of the bot account)
     - `BOT_GH_NAME` (the name of the bot account)

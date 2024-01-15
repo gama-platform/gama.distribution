@@ -1,7 +1,16 @@
-# gama.ppa
+# PPA
 
-This action creates a GitHub Pages site using Jekyll and CloudFlare Pages.
-It is triggered by either a `workflow_dispatch` or a `workflow_call` event, both with the `tag` input referring to the tag attached to the release you wish to publish.
+This action creates an apt repository hosted on CloudFlare Pages.
+It is triggered by the ![update-apt action](../.github/actions/update-apt/action.yaml), that has a `tag` input referring to the tag attached to the release you wish to publish.
+
+To add the repository do the following commands:
+
+```bash
+sudo -i
+apt update
+apt install ca-certificates
+echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | sudo tee -a /etc/apt/sources.list
+```
 
 ## Latest packages 🟢
 
@@ -22,23 +31,3 @@ To see how to install these packages on your system, head over to the [ppa web p
 - {{ p.name }} - [{{ p.debfile }}](https://distribution.gama-platform.org/ppa/{{ p.file }})
 {% endfor %}
 {% endif %}
-
-- - -
-
-# Instructions to host this PPA
-
-- Go to your CloudFlare dashboard
-- Click on `Workers & Pages`, then `Pages` and `Connect to git`
-- Select the repository
-- Set framework as `Jekyll`
-- Set build command as `jekyll build && mv __site/* _site` to enable the use of redirects and headers
-- Set the following secrets: 
-    - `BOT_GH_EMAIL` (the email of the bot account)
-    - `BOT_GH_NAME` (the name of the bot account)
-- Trigger the action and you are good to go 🎉! To add the repository do the following commands:
-```bash
-sudo -i
-apt update
-apt install ca-certificates
-echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | sudo tee -a /etc/apt/sources.list
-``` 

@@ -1,0 +1,113 @@
+name: 'Update PPA'
+description: 'Publish latest version of Gama to the apt repository/ppa'
+inputs:
+  tag:  
+    description: "Release tag name"
+    required: true
+    type: string
+  repository: 
+    description: "Repository name eg. gama-platform/gama"
+    type: string
+    default: "gama-platform/gama"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check if ${{ inputs.tag }} is a pre-release
+      shell: bash
+      working-directory: ./ppa
+      id: pre_release_check
+      run: | 
+        body="$(curl https://api.github.com/repos/${{ inputs.repository }}/releases)"
+        pre="$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$body")"
+
+        echo "pre: $pre"
+
+        if [[ "${{ inputs.tag }}" == "$pre" ]]; then 
+          echo "is_pre_release=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "is_pre_release=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Clear alpha packages from `Packages` file and repository
+      shell: bash
+      working-directory: ./ppa
+      run: |
+        python scripts/clear_alpha_packages.py
+
+    - name: Download deb file from gama-platform/gama
+      uses: robinraju/release-downloader@v1.8
+      id: download
+      with:
+        repository: gama-platform/gama
+        tag: ${{ inputs.tag }}
+        fileName: "*.deb"
+        tarBall: false
+        zipBall: false
+        out-file-path: ./ppa
+
+
+    - name: Creating the `Packages`, `Packages.gz` and `Release` files
+      shell: bash
+      working-directory: ./ppa
+      run: |
+        if [[ "${{ steps.pre_release_check.outputs.is_pre_release }}" == "false" ]]; then 
+          dpkg-scanpackages --multiversion . > Packages
+        
+          echo '${{ steps.download.outputs.downloaded_files }}' | jq -r '.[]' | while read -r f; do 
+            echo file: $f
+            echo run: sed -i "s|Filename: ./$(basename $f)|Filename: ./$(basename $f).html|g" Packages
+            sed -i "s|Filename: ./$(basename $f)|Filename: ./$(basename $f).html|g" Packages
+          done
+
+        else
+          echo '${{ steps.download.outputs.downloaded_files }}' | jq -r '.[]' | while read -r f; do 
+            filename=$(basename $f)
+            dpkg-scanpackages --multiversion $filename > Packages_${filename}
+
+            echo file: $filename - Packages_${filename}
+            echo run: sed -i "s|Filename: $f|Filename: ./$filename.html|g" Packages_${filename}
+                      sed -i "s|Filename: $f|Filename: ./$filename.html|g" Packages_${filename}
+            
+            echo run: sed -i "s|Package: \(.*\)|Package: \1-alpha|g" Packages_${filename}
+                      sed -i "s|Package: \(.*\)|Package: \1-alpha|g" Packages_${filename}
+
+            cat Packages_${filename}
+          done
+
+          cat Packages_* >> Packages
+          rm Packages_*
+        fi
+
+        gzip -k -f Packages
+        apt-ftparchive release . > Release
+
+    - name: Setup redirections to https://github.com/${{ inputs.repository }}/releases/download/${{ inputs.tag }}
+      if: steps.pre_release_check.outputs.is_pre_release == 'false'
+      run: python scripts/setup_redirections.py ${{ inputs.repository }} ${{ inputs.tag }}
+      shell: bash
+      working-directory: ./ppa
+
+    - name: Setup redirections to https://github.com/${{ inputs.repository }}/releases/download/${{ inputs.tag }} pre-releases
+      if: steps.pre_release_check.outputs.is_pre_release == 'true'
+      run: python scripts/setup_redirections.py -p ${{ inputs.repository }} ${{ inputs.tag }}
+      shell: bash
+      working-directory: ./ppa
+    
+    - name: Updating index and README
+      shell: bash
+      if: steps.pre_release_check.outputs.is_pre_release == 'false'
+      run: python scripts/setup_index_and_readme.py ${{ inputs.tag }} 
+      working-directory: ./ppa
+
+    - name: Updating index and README with pre-release
+      shell: bash
+      if: steps.pre_release_check.outputs.is_pre_release == 'true'
+      run: python scripts/setup_index_and_readme.py ${{ inputs.tag }} -p '${{ steps.download.outputs.downloaded_files }}'
+      working-directory: ./ppa
+
+    - name: remove downloaded deb files
+      shell: bash
+      working-directory: ./ppa
+      run: rm *.deb
+        
