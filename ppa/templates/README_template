@@ -5,27 +5,23 @@ It is triggered by either a `workflow_dispatch` or a `workflow_call` event, both
 
 ## Latest packages 🟢
 
-To see how to install these packages on your system, head over to the [ppa web page](https://ppa.gama-platform.org).
+To see how to install these packages on your system, head over to the [ppa web page](https://distribution.gama-platform.org/ppa).
+
+{% for p in latest_packages %}
+- {{ p.name }} - [{{ p.debfile }}](https://distribution.gama-platform.org/ppa/{{ p.file }})
+{% endfor %}
 
 
-- gama-platform - [GAMA_1.9.2_Linux.deb](https://ppa.gama-platform.org/./GAMA_1.9.2_Linux.deb.html)
-
-- gama-platform-jdk - [GAMA_1.9.2_Linux_with_JDK.deb](https://ppa.gama-platform.org/./GAMA_1.9.2_Linux_with_JDK.deb.html)
-
-
-
-
+{% if pre_release %}
 ## Pre-release/alpha packages ⚠️
 
 > [!IMPORTANT]
 > The following packages are unstable and thus not recommended for normal use.
 
-
-- gama-platform-alpha - [GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb](https://ppa.gama-platform.org/./GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb.html)
-
-- gama-platform-jdk-alpha - [GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb](https://ppa.gama-platform.org/./GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb.html)
-
-
+{% for p in alpha_packages %}
+- {{ p.name }} - [{{ p.debfile }}](https://distribution.gama-platform.org/ppa/{{ p.file }})
+{% endfor %}
+{% endif %}
 
 - - -
 
@@ -44,5 +40,5 @@ To see how to install these packages on your system, head over to the [ppa web p
 sudo -i
 apt update
 apt install ca-certificates
-echo "deb [trusted=yes] https://ppa.gama-platform.org ./" | sudo tee -a /etc/apt/sources.list
+echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | sudo tee -a /etc/apt/sources.list
 ``` 

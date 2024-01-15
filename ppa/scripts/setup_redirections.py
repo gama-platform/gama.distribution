@@ -1,6 +1,5 @@
 import glob
 import sys
-import os
 
 import apt_pkg
 
@@ -56,7 +55,7 @@ with open("templates/_headers_template", "r") as f:
         latest_packages = glob.glob("*.deb")
     
 
-    with open("__site/_headers", "w") as fw:
+    with open("../../__site/_headers.d/ppa_redirections", "w") as fw:
         fw.write(template_header.render(
             latest_packages=latest_packages, 
             alpha_packages=alpha_packages,

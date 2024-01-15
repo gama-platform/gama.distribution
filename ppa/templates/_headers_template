@@ -1,13 +1,9 @@
-/*
-  Access-Control-Allow-Origin: *
-
 {% for p in latest_packages %}
 /{{p}}.html
   Content-Disposition: attachment; filename="{{p}}"
   Location: https://github.com/{{repo}}/releases/download/{{tag}}/{{p}}
 
 {% endfor %}
-
 {% for a in alpha_packages %}
 /{{a}}.html
   Content-Disposition: attachment; filename="{{a}}"

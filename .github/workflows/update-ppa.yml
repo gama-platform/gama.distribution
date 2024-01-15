@@ -32,6 +32,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - run: cd ppa/
+
       - name: Check if ${{ inputs.tag }} is a pre-release
         id: pre_release_check
         run: | 
@@ -110,7 +112,9 @@ jobs:
         run: python scripts/setup_index_and_readme.py ${{ inputs.tag }} -p '${{ steps.download.outputs.downloaded_files }}'
 
       - name: remove downloaded deb files
-        run: rm *.deb
+        run: |
+          rm *.deb
+          cd - 
       
       - name: Commit new files
         uses: EndBug/add-and-commit@v9

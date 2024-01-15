@@ -99,23 +99,15 @@
     <br/>
 
     <ul>
-        
+        {% for p in latest_packages %}
         <li>
-            <a href="./GAMA_1.9.2_Linux.deb.html">gama-platform</a>
-            <br>Architecture: amd64
-            <br>Version: 1.9.2
-            <br>Description: GAMA is a modeling and simulation development environment for building spatially explicit agent-based simulations
-            <br>Filename: <a href="./GAMA_1.9.2_Linux.deb.html">GAMA_1.9.2_Linux.deb</a>
+            <a href="{{ p.file }}">{{ p.name }}</a>
+            <br>Architecture: {{ p.architecture }}
+            <br>Version: {{ p.version }}
+            <br>Description: {{ p.description }}
+            <br>Filename: <a href="{{ p.file }}">{{ p.debfile }}</a>
         </li>
-        
-        <li>
-            <a href="./GAMA_1.9.2_Linux_with_JDK.deb.html">gama-platform-jdk</a>
-            <br>Architecture: amd64
-            <br>Version: 1.9.2
-            <br>Description: GAMA is a modeling and simulation development environment for building spatially explicit agent-based simulations
-            <br>Filename: <a href="./GAMA_1.9.2_Linux_with_JDK.deb.html">GAMA_1.9.2_Linux_with_JDK.deb</a>
-        </li>
-        
+        {% endfor %}
     </ul>
 
     <br/>
@@ -140,50 +132,36 @@
 sudo -i
 apt update
 apt install ca-certificates
-echo "deb [trusted=yes] https://ppa.gama-platform.org ./" | tee -a /etc/apt/sources.list</code>
+echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | tee -a /etc/apt/sources.list</code>
     </pre>
 
     <hr>
 
-    
+    {% if pre_release %}
     <h2>alpha packages</h2>
 
     <p>The following apt packages can be installed the same way as the usual ones, however these are unstable and thus not recommended</p>
 
     <ul>
-        
+        {% for p in alpha_packages %}
         <li>
-            <a href="./GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb.html">gama-platform-alpha</a>
-            <br>Architecture: amd64
-            <br>Version: 1.9.3
-            <br>Description: GAMA is a modeling and simulation development environment for building spatially explicit agent-based simulations
-            <br>Filename: <a href="./GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb.html">GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb</a>
+            <a href="{{ p.file }}">{{ p.name }}</a>
+            <br>Architecture: {{ p.architecture }}
+            <br>Version: {{ p.version }}
+            <br>Description: {{ p.description }}
+            <br>Filename: <a href="{{ p.file }}">{{ p.debfile }}</a>
         </li>
-        
-        <li>
-            <a href="./GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb.html">gama-platform-jdk-alpha</a>
-            <br>Architecture: amd64
-            <br>Version: 1.9.3
-            <br>Description: GAMA is a modeling and simulation development environment for building spatially explicit agent-based simulations
-            <br>Filename: <a href="./GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb.html">GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb</a>
-        </li>
-        
+        {% endfor %}
     </ul>
 
     <hr>
-    
+    {% endif %}
 
     <h2>All Versions</h2>
     <div class="file-list">
-    $
-    <div class="file-list-item"><a href="./GAMA_1.9.2_Linux.deb.html">GAMA_1.9.2_Linux.deb</a><br></div>
-    $
-    <div class="file-list-item"><a href="./GAMA_1.9.2_Linux_with_JDK.deb.html">GAMA_1.9.2_Linux_with_JDK.deb</a><br></div>
-    $
-    <div class="file-list-item"><a href="./GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb.html">GAMA_1.9.3_Linux_12.01.24_e5bc6d8.deb</a><br></div>
-    $
-    <div class="file-list-item"><a href="./GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb.html">GAMA_1.9.3_Linux_with_JDK_12.01.24_e5bc6d8.deb</a><br></div>
-    
+    {% for p in all_packages%}$
+    <div class="file-list-item"><a href="{{ p.file }}">{{ p.debfile }}</a><br></div>
+    {% endfor %}
     </div>
 
     <script>
