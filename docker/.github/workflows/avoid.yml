@@ -1,0 +1,50 @@
+name: 'Avoid repo being suspended'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  github_stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout codes'
+        uses: actions/checkout@v2
+
+      - name: 'Avoid Github Workflow being suspended'
+        run: echo $(cat /proc/sys/kernel/random/uuid) > .github/UUID.txt
+
+      - name: 'Commit Files'
+        id: commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -am 'avoid being suspended'
+          echo ::set-output name=status::success
+           
+      - name: 'GitHub Push'
+        if: steps.commit.output.status != 'success'
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+  docker_stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Prevent Docker Hub stale"
+        run: |
+          docker pull gamaplatform/gama:1.8-rc2
+          docker pull gamaplatform/gama:1.8.0
+          docker pull gamaplatform/gama:1.8.1
+          docker image prune -a -f
+          docker pull gamaplatform/gama:1.8.2-rc1
+          docker pull gamaplatform/gama:1.8.2-rc2
+          docker pull gamaplatform/gama:1.9.0
+          docker image prune -a -f
+          docker pull gamaplatform/gama:1.9.1
+          docker pull gamaplatform/gama:1.9.2
+          docker pull gamaplatform/gama:latest
+          docker pull gamaplatform/gama:alpha
