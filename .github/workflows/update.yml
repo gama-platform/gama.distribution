@@ -40,6 +40,22 @@ jobs:
 
           pip install Jinja2
 
+      - name: Check if ${{ inputs.tag }} is a pre-release
+        shell: bash
+        working-directory: ./ppa
+        id: pre_release_check
+        run: | 
+          body="$(curl https://api.github.com/repos/${{ env.REPOSITORY }}/releases)"
+          pre="$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$body")"
+  
+          echo "pre: $pre"
+  
+          if [[ "${{ inputs.tag }}" == "$pre" ]]; then 
+            echo "is_pre_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_pre_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -49,6 +65,14 @@ jobs:
         with:
           tag: ${{ inputs.tag }}
           repository: ${{ env.REPOSITORY }}
+          is_pre_release: ${{ steps.pre_release_check.outputs.is_pre_release }}
+
+      - name: Update docker registries
+        if: contains(inputs.targets, 'docker') 
+        uses: ./.github/actions/update-docker
+        with:
+          tag: ${{ inputs.tag }}
+          is_pre_release: ${{ steps.pre_release_check.outputs.is_pre_release }}
       
       - name: Commit new files
         uses: EndBug/add-and-commit@v9

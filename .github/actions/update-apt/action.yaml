@@ -4,31 +4,18 @@ inputs:
   tag:  
     description: "Release tag name"
     required: true
-    type: string
+
   repository: 
     description: "Repository name eg. gama-platform/gama"
-    type: string
     default: "gama-platform/gama"
+
+  is_pre_release:
+    description: "Is this a pre-release?"
+    default: "false"
 
 runs:
   using: "composite"
   steps:
-    - name: Check if ${{ inputs.tag }} is a pre-release
-      shell: bash
-      working-directory: ./ppa
-      id: pre_release_check
-      run: | 
-        body="$(curl https://api.github.com/repos/${{ inputs.repository }}/releases)"
-        pre="$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$body")"
-
-        echo "pre: $pre"
-
-        if [[ "${{ inputs.tag }}" == "$pre" ]]; then 
-          echo "is_pre_release=true" >> "$GITHUB_OUTPUT"
-        else
-          echo "is_pre_release=false" >> "$GITHUB_OUTPUT"
-        fi
-
     - name: Clear alpha packages from `Packages` file and repository
       shell: bash
       working-directory: ./ppa
