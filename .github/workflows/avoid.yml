@@ -1,0 +1,19 @@
+name: 'Avoid docker registries from being suspended'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  docker_stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Prevent Docker Hub stale"
+      # we pull all images to prevent them from being deleted
+        run: |
+          for t in $(ls docker/tags); do 
+            docker pull gamaplatform/gama:$t 
+          done
+
+          docker image prune -a -f 

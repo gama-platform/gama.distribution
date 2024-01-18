@@ -1,3 +1,5 @@
+# This workflow is used as an entrypoint for the release process.
+
 name: Update repositories
 run-name: Publish release ${{ inputs.tag }}
 
