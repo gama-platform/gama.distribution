@@ -28,9 +28,9 @@ runs:
     - name: Build & Push alpha docker image
       if : ${{ steps.pre_release_check.outputs.is_pre_release }} == 'true'
       uses: docker/build-push-action@v5
-      working-directory: ./docker/alpha
+      working-directory: ./docker/tags/alpha
       with:
-        context: . #in /docker/${{ inputs.tag }} thx to working-directory
+        context: . #in /docker/tags/${{ inputs.tag }} thx to working-directory
         push: true
         # GHCR.io replaces docker.pkg.github.com
         tags: |
@@ -40,25 +40,40 @@ runs:
           docker.pkg.github.com/gama-platform/gama.docker/gama:${{ inputs.tag }}
           docker.pkg.github.com/gama-platform/gama.docker/gama:alpha
 
-          gama-platform/gama:${{ inputs.tag }}
-          gama-platform/gama:alpha
+          gamaplatform/gama:alpha
+          gamaplatform/gama:${{ inputs.tag }}
 
-    # TODO
+    - name: Change Alpha tag to Stable ${{ inputs.tag }}
+      working-directory: ./docker/tags
+      shell: bash
+      if : ${{ steps.pre_release_check.outputs.is_pre_release }} == 'false'
+      run: |
+        cp -r alpha ${{ input.tag }}
 
-    # - name: Build & Push stable docker image
-    #   if : ${{ steps.pre_release_check.outputs.is_pre_release }} == 'false'
-    #   uses: docker/build-push-action@v5
-    #   working-directory: ./docker/${{ inputs.tag }}
-    #   with:
-    #     context: .
-    #     push: true
-    #     # GHCR.io replaces docker.pkg.github.com
-    #     tags: |
-    #       ghcr.io/gama-platform/gama:${{ inputs.tag }}
-    #       ghcr.io/gama-platform/gama:latest
+        cat << EOF > "$GITHUB_STEP_SUMMARY"
+        > [!NOTE] FYI 
+        > The `tags/alpha` directory has been copied to `[tags/${{ inputs.tag }}](./docker/tags/${{ inputs.tag }})`
+        > If you wish to change your Dockerfile for the next alpha version, edit the one located`[tags/alpha](./docker/tags/alpha)`
+        > This copy will occur again on the next stable release
 
-    #       docker.pkg.github.com/gama-platform/gama.docker/gama:${{ inputs.tag }}
-    #       docker.pkg.github.com/gama-platform/gama.docker/gama:latest
+        EOF
 
-    #       gama-platform/gama:${{ inputs.tag }}
-    #       gama-platform/gama:latest
+
+    - name: Build & Push stable docker image
+      if : ${{ steps.pre_release_check.outputs.is_pre_release }} == 'false'
+      uses: docker/build-push-action@v5
+      working-directory: ./docker/tags/${{ inputs.tag }}
+      with:
+        context: .
+        push: true
+        # GHCR.io replaces docker.pkg.github.com
+        tags: |
+          ghcr.io/gama-platform/gama:${{ inputs.tag }}
+          ghcr.io/gama-platform/gama:latest
+
+          docker.pkg.github.com/gama-platform/gama.docker/gama:${{ inputs.tag }}
+          docker.pkg.github.com/gama-platform/gama.docker/gama:latest
+
+          gamaplatform/gama:${{ inputs.tag }}
+          gamaplatform/gama:latest
+
