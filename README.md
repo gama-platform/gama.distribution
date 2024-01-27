@@ -46,10 +46,13 @@ If you are not a maintainer, you can skip this section.
 - Set the following secrets: 
     - `BOT_GH_EMAIL` (the email of the bot account)
     - `BOT_GH_NAME` (the name of the bot account)
+    - `DOCKER_HUB_USERNAME` (the username of the dockerhub account)
+    - `DOCKER_HUB_PASSWORD` (the password of the dockerhub account)
 
 ### Structure of the repository
 
 - `__site`: contains what will be in the root of the website (such as the `_header` file)
 - `ppa`: contains the files for the apt repository
+- `docker`: contains the dockerfiles for each version of gama
 - `<distribution>/scripts`: scripts used in `<distribution>` workflow
 - `<distribution>/templates`: templates used in `<distribution>` workflow

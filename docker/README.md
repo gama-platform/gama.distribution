@@ -28,6 +28,7 @@ The [GAMA Platform Docker repository](https://hub.docker.com/r/gamaplatform/gama
   - [_monthly_](https://hub.docker.com/layers/gamaplatform/gama/monthly/images/sha256-9a21bd7860e3833b7fcd40d78e3dfda1fdf7f923e68b875ae37d1925cb47a78d?context=explore) which is build every month
 - **Meta tags**
   - [_latest_](https://hub.docker.com/layers/gamaplatform/gama/latest/images/sha256-15746fa81624c38b085d891e521fb4fe737f06b3a1f6a955dc53b4d5558ad46f?context=explore) which is the latest official release (currently it's the version 1.9.2 )
+  - _alpha_ which is the version currently being developped, this tag may be updated
 
 #### Simple usage
 
@@ -107,13 +108,13 @@ To see all the available tags, see [there](https://hub.docker.com/r/gamaplatform
 Clone this repository
 
 ```
-git clone https://github.com/gama-platform/gama.docker
+git clone https://github.com/gama-platform/gama.distribution
 ```
 
 Move in the cloned repository
 
 ```
-cd ./gama.docker/tags/<any-tag-name>
+cd ./gama.distribution/docker/tags/<any-tag-name>
 ```
 
 Build the Docker image
@@ -144,8 +145,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 # Authors
 
 * **Arthur Brugiere** - [RoiArthurB](https://github.com/RoiArthurB)
+* **Yann Pomie** - [WoodenMaiden](https://github.com/WoodenMaiden)
 
-See also the list of [contributors](https://github.com/gama-platform/gama.docker/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/gama-platform/gama.distribution/contributors) who participated in this project.
 
 # License
 
