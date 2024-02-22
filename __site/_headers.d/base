@@ -2,3 +2,5 @@
   Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
+/docker 
+  Location: https://github.com/gama-platform/gama.docker/pkgs/container/gama.docker%2Fgama
