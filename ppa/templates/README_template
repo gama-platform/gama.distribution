@@ -1,0 +1,33 @@
+# PPA
+
+This action creates an apt repository hosted on CloudFlare Pages.
+It is triggered by the ![update-apt action](../.github/actions/update-apt/action.yaml), that has a `tag` input referring to the tag attached to the release you wish to publish.
+
+To add the repository do the following commands:
+
+```bash
+sudo -i
+apt update
+apt install ca-certificates
+echo "deb [trusted=yes] https://distribution.gama-platform.org/ppa ./" | sudo tee -a /etc/apt/sources.list
+```
+
+## Latest packages 🟢
+
+To see how to install these packages on your system, head over to the [ppa web page](https://distribution.gama-platform.org/ppa).
+
+{% for p in latest_packages %}
+- {{ p.name }} - [{{ p.debfile }}](https://distribution.gama-platform.org/ppa/{{ p.file }})
+{% endfor %}
+
+
+{% if pre_release %}
+## Pre-release/alpha packages ⚠️
+
+> [!IMPORTANT]
+> The following packages are unstable and thus not recommended for normal use.
+
+{% for p in alpha_packages %}
+- {{ p.name }} - [{{ p.debfile }}](https://distribution.gama-platform.org/ppa/{{ p.file }})
+{% endfor %}
+{% endif %}
