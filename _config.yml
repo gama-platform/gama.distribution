@@ -1,3 +1,4 @@
 exclude: 
   - ppa/templates/
   - ppa/scripts/
+  - docker/
